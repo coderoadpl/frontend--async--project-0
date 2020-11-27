@@ -1,19 +1,29 @@
-const fetchData = (url, options = {}) => {
-    const {
-        startCallback = () => console.log(`[${url}] Start fetching`),
-        catchCallback = (error) => console.error('Failed to fetch data', error),
-        endCallback = () => console.log(`[${url}] Stop fetching`)
-    } = options
+class ToDo {
+    constructor() {
+        this.container = document.body
+        this.tasks = []
+    }
 
-    startCallback()
-    return fetch(url)
-        .then((response) => response.json())
-        .catch(catchCallback)
-        .finally(endCallback)
+    init() {
+        this.render()
+    }
+
+    render() {
+        this.container.innerHTML = ''
+
+        const ul = document.createElement('ul')
+
+        this.tasks.forEach((task) => {
+            const li = document.createElement('li')
+
+            li.innerText = task.text
+
+            ul.appendChild(li)
+        })
+
+        this.container.appendChild(ul)
+    }
 }
 
-fetchData('/data.json')
-    .then((data) => console.log(data))
-
-fetchData('/data2.json', { startCallback: () => console.log('Start fetching data2.json') })
-    .then((data) => console.log(data))
+const todo1 = new ToDo()
+todo1.init()

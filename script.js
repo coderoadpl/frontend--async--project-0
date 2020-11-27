@@ -5,6 +5,14 @@ class ToDo {
     }
 
     init() {
+        fetchData('/data.json')
+            .then(this.loadTasks.bind(this))
+
+        this.render()
+    }
+
+    loadTasks(data) {
+        this.tasks = this.tasks.concat(data.tasks)
         this.render()
     }
 

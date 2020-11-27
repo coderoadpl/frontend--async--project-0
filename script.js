@@ -30,7 +30,43 @@ class ToDo {
 
     loadTasks(data) {
         this.tasks = data.tasks
+        this.hasError = null
         this.render()
+    }
+
+    renderTasks(){
+        const ul = document.createElement('ul')
+
+        this.tasks.forEach((task) => {
+            const li = document.createElement('li')
+
+            li.innerText = task.text
+
+            ul.appendChild(li)
+        })
+
+        this.container.appendChild(ul)
+    }
+
+    renderButtons() {
+        const button1 = document.createElement('button')
+        button1.innerText = 'Fetch tasks 1 (OK)'
+        const button2 = document.createElement('button')
+        button2.innerText = 'Fetch tasks 2 (OK)'
+        const button3 = document.createElement('button')
+        button3.innerText = 'Fetch tasks 3 (empty)'
+        const button4 = document.createElement('button')
+        button4.innerText = 'Fetch tasks 4 (error)'
+
+        button1.addEventListener('click', () => this.fetchTasks('/data.json'))
+        button2.addEventListener('click', () => this.fetchTasks('/data2.json'))
+        button3.addEventListener('click', () => this.fetchTasks('/data3.json'))
+        button4.addEventListener('click', () => this.fetchTasks('/data4.json'))
+
+        this.container.appendChild(button1)
+        this.container.appendChild(button2)
+        this.container.appendChild(button3)
+        this.container.appendChild(button4)
     }
 
     renderLoader() {
@@ -45,40 +81,33 @@ class ToDo {
         this.container.appendChild(text)
     }
 
+    renderEmptyState() {
+        const text = document.createElement('p')
+        text.innerText = 'No tasks in fetch data!'
+        this.container.appendChild(text)
+    }
+
     render() {
         this.container.innerHTML = ''
 
-        if (this.isLoading) {
-            this.renderLoader()
-            return
-        }
+        this.renderButtons()
 
         if (this.hasError) {
             this.renderError()
             return
         }
 
-        const button1 = document.createElement('button')
-        button1.innerText = 'Fetch tasks 1'
-        const button2 = document.createElement('button')
-        button2.innerText = 'Fetch tasks 2'
+        if (this.isLoading) {
+            this.renderLoader()
+            return
+        }
 
-        button1.addEventListener('click', () => this.fetchTasks('/data.json'))
-        button2.addEventListener('click', () => this.fetchTasks('/data2.json'))
+        if (!Array.isArray(this.tasks) || this.tasks.length === 0) {
+            this.renderEmptyState()
+            return
+        }
 
-        const ul = document.createElement('ul')
-
-        this.tasks.forEach((task) => {
-            const li = document.createElement('li')
-
-            li.innerText = task.text
-
-            ul.appendChild(li)
-        })
-
-        this.container.appendChild(button1)
-        this.container.appendChild(button2)
-        this.container.appendChild(ul)
+        this.renderTasks()
     }
 }
 

@@ -8,11 +8,16 @@ class ToDo {
 
     init() {
         fetchData('/data.json', {
-            endCallback: this.endLoadingTasks.bind(this)
+            endCallback: this.endLoadingTasks.bind(this),
+            catchCallback: this.loadingTasksFailed.bind(this),
         })
             .then(this.loadTasks.bind(this))
 
         this.render()
+    }
+
+    loadingTasksFailed(error) {
+        this.hasError = error
     }
 
     endLoadingTasks() {
@@ -25,14 +30,28 @@ class ToDo {
         this.render()
     }
 
+    renderLoader() {
+        const text = document.createElement('p')
+        text.innerText = 'Loading...'
+        this.container.appendChild(text)
+    }
+
+    renderError() {
+        const text = document.createElement('p')
+        text.innerText = 'Error ocurred! ' + this.hasError.message
+        this.container.appendChild(text)
+    }
+
     render() {
         this.container.innerHTML = ''
 
         if (this.isLoading) {
-            const text = document.createElement('p')
-            text.innerText = 'Loading...'
-            this.container.appendChild(text)
+            this.renderLoader()
+            return
+        }
 
+        if (this.hasError) {
+            this.renderError()
             return
         }
 

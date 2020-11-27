@@ -7,13 +7,16 @@ class ToDo {
     }
 
     init() {
-        fetchData('/data.json', {
+        this.fetchTasks('/data.json')
+        this.render()
+    }
+
+    fetchTasks(url) {
+        return fetchData(url, {
             endCallback: this.endLoadingTasks.bind(this),
             catchCallback: this.loadingTasksFailed.bind(this),
         })
             .then(this.loadTasks.bind(this))
-
-        this.render()
     }
 
     loadingTasksFailed(error) {
@@ -26,7 +29,7 @@ class ToDo {
     }
 
     loadTasks(data) {
-        this.tasks = this.tasks.concat(data.tasks)
+        this.tasks = data.tasks
         this.render()
     }
 
@@ -55,6 +58,14 @@ class ToDo {
             return
         }
 
+        const button1 = document.createElement('button')
+        button1.innerText = 'Fetch tasks 1'
+        const button2 = document.createElement('button')
+        button2.innerText = 'Fetch tasks 2'
+
+        button1.addEventListener('click', () => this.fetchTasks('/data.json'))
+        button2.addEventListener('click', () => this.fetchTasks('/data2.json'))
+
         const ul = document.createElement('ul')
 
         this.tasks.forEach((task) => {
@@ -65,6 +76,8 @@ class ToDo {
             ul.appendChild(li)
         })
 
+        this.container.appendChild(button1)
+        this.container.appendChild(button2)
         this.container.appendChild(ul)
     }
 }
